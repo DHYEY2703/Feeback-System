@@ -82,7 +82,6 @@ PORT=5000
 MONGO_URI=mongodb://localhost:27017/feedback-system
 JWT_SECRET=your_jwt_secret_key
 FRONTEND_URL=http://localhost:5173
-GOOGLE_FORM_URL=https://docs.google.com/forms/...
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-gmail-app-password
 ```
