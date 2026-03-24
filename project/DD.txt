@@ -1,0 +1,291 @@
+SYSTEM DESIGN DOCUMENTATION
+
+----------------------------------------
+
+1. ARCHITECTURE OVERVIEW
+
+The system follows a 3-tier architecture:
+
+- Presentation Layer (Frontend)
+- Application Layer (Backend/API)
+- Data Layer (Database)
+
+FLOW:
+User → Frontend → Backend API → Database  
+Admin → Admin Panel → Backend API → Database
+
+----------------------------------------
+
+2. COMPONENT DESIGN
+
+A. FRONTEND (USER SIDE)
+
+PAGES:
+
+1. Home Page
+- Contains:
+  - "Submit Your Feedback" button
+- Action:
+  - Redirect to User Details Page
+
+2. User Details Page
+- Input Fields:
+  - Username
+  - Email
+  - Phone Number
+- Buttons:
+  - Continue
+
+- Logic:
+  - Validate inputs
+  - Call API → /check-user
+  - If exists → redirect to "Already Responded Page"
+  - Else → save in session/local storage → redirect to Feedback Page
+
+3. Feedback Page
+- Display:
+  - Embedded Google Form (iframe) OR redirect
+- After submission:
+  - Trigger API → /submit-user
+
+4. Already Responded Page
+- Message:
+  - "You have already responded"
+
+----------------------------------------
+
+B. FRONTEND (ADMIN SIDE)
+
+PAGES:
+
+1. Admin Login Page
+- Fields:
+  - Username
+  - Password
+- API Call → /admin/login
+
+2. Admin Dashboard
+- Table View:
+  - Username (clickable)
+  - Email
+  - Status
+
+- Features:
+  - Search bar
+  - Filter options
+
+3. User Detail Page
+- Display:
+  - Username
+  - Email
+  - Phone
+  - Feedback Data
+
+----------------------------------------
+
+3. BACKEND DESIGN (API STRUCTURE)
+
+BASE URL: /api
+
+ENDPOINTS:
+
+1. CHECK USER
+POST /api/check-user
+Request:
+{
+  email: string
+}
+
+Response:
+{
+  exists: true/false
+}
+
+----------------------------------------
+
+2. SAVE USER (Before Feedback)
+POST /api/save-user
+Request:
+{
+  username: string,
+  email: string,
+  phone: string
+}
+
+Response:
+{
+  success: true
+}
+
+----------------------------------------
+
+3. SUBMIT USER (After Feedback)
+POST /api/submit-feedback
+Request:
+{
+  email: string,
+  feedback: object/string
+}
+
+Response:
+{
+  success: true
+}
+
+----------------------------------------
+
+4. ADMIN LOGIN
+POST /api/admin/login
+Request:
+{
+  username: string,
+  password: string
+}
+
+Response:
+{
+  token: JWT
+}
+
+----------------------------------------
+
+5. GET ALL USERS
+GET /api/admin/users
+Headers:
+{
+  Authorization: Bearer token
+}
+
+Response:
+[
+  {
+    username,
+    email,
+    has_submitted
+  }
+]
+
+----------------------------------------
+
+6. GET USER DETAILS
+GET /api/admin/users/:id
+
+Response:
+{
+  username,
+  email,
+  phone,
+  feedback
+}
+
+----------------------------------------
+
+4. DATABASE DESIGN
+
+COLLECTION: users
+
+STRUCTURE:
+
+{
+  _id: ObjectId,
+  username: String,
+  email: String (Unique),
+  phone: String,
+  has_submitted: Boolean,
+  feedback: Mixed (JSON/Text),
+  created_at: Date
+}
+
+INDEXES:
+- email (unique index)
+
+----------------------------------------
+
+5. DATA FLOW
+
+USER FLOW:
+
+1. User clicks button
+2. Redirect to details page
+3. User enters data
+4. Frontend → /check-user
+5. Backend checks DB:
+   IF exists → return true → show "Already Responded"
+   ELSE → save user → redirect to form
+6. User submits feedback
+7. Backend updates:
+   has_submitted = true
+   feedback = stored
+
+----------------------------------------
+
+ADMIN FLOW:
+
+1. Admin logs in
+2. Receives JWT token
+3. Dashboard fetches all users
+4. Click on user → fetch detailed data
+
+----------------------------------------
+
+6. STATE MANAGEMENT
+
+- Use Local Storage or Session Storage:
+  - Store user email temporarily
+- Used to track user during navigation
+
+----------------------------------------
+
+7. SECURITY DESIGN
+
+- Input validation on frontend + backend
+- JWT authentication for admin routes
+- Password hashing (bcrypt)
+- Prevent duplicate entries using unique email
+- CORS enabled properly
+
+----------------------------------------
+
+8. ERROR HANDLING
+
+- Invalid input → return 400
+- Duplicate email → return 409
+- Unauthorized admin → return 401
+- Server error → return 500
+
+----------------------------------------
+
+9. UI/UX DESIGN GUIDELINES
+
+- Minimal UI for user side
+- Clean form layout
+- Mobile responsive
+- Clear CTA buttons
+- Feedback messages:
+  - Success
+  - Error
+  - Already responded
+
+----------------------------------------
+
+10. DEPLOYMENT DESIGN
+
+- Frontend:
+  - Vercel / Netlify
+
+- Backend:
+  - Render / Railway / Node server
+
+- Database:
+  - MongoDB Atlas
+
+----------------------------------------
+
+11. SCALABILITY CONSIDERATIONS
+
+- Use pagination in admin panel
+- Optimize DB queries
+- Separate services if scaling needed
+
+----------------------------------------
+

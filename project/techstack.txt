@@ -1,0 +1,234 @@
+DETAILED TECH STACK (UPDATED WITH QR FEATURE)
+
+----------------------------------------
+
+1. FRONTEND STACK (USER + ADMIN)
+
+CORE:
+- HTML5  
+- CSS3  
+- JavaScript (ES6+)  
+
+FRAMEWORK:
+- React.js 18+
+  - Functional Components
+  - Hooks (useState, useEffect, useContext)
+
+ROUTING:
+- React Router DOM
+  - Protected Routes (Admin only)
+
+STATE MANAGEMENT:
+- Context API  
+OR  
+- Redux Toolkit  
+
+STYLING:
+- Tailwind CSS  
+OR  
+- Bootstrap 5  
+
+FORM HANDLING:
+- React Hook Form  
+- Yup Validation  
+
+API HANDLING:
+- Axios  
+
+UI/UX:
+- Framer Motion  
+- React Toastify  
+
+QR CODE DISPLAY:
+- qrcode.react (to generate QR on frontend)
+OR
+- qr-code-styling (for styled QR codes)
+
+----------------------------------------
+
+2. BACKEND STACK
+
+RUNTIME:
+- Node.js  
+
+FRAMEWORK:
+- Express.js  
+
+ARCHITECTURE:
+- MVC Pattern  
+
+MIDDLEWARE:
+- express.json()  
+- cors  
+- helmet  
+- morgan  
+
+VALIDATION:
+- express-validator OR Joi  
+
+AUTHENTICATION:
+- JWT  
+- bcrypt  
+
+ENV:
+- dotenv  
+
+QR CODE GENERATION (SERVER SIDE OPTION):
+- qrcode (npm package)
+
+----------------------------------------
+
+3. DATABASE STACK
+
+DATABASE:
+- MongoDB  
+
+ODM:
+- Mongoose  
+
+UPDATED SCHEMA:
+
+{
+  _id: ObjectId,
+  username: String,
+  email: String (unique),
+  phone: String,
+  has_submitted: Boolean,
+  feedback: Mixed,
+  qr_code_url: String,
+  created_at: Date
+}
+
+----------------------------------------
+
+4. QR CODE FUNCTIONALITY
+
+FLOW:
+
+1. User fills Username, Email, Phone
+2. Backend checks:
+   IF email exists → "Already Responded"
+   ELSE:
+     - Generate UNIQUE TOKEN (UUID)
+
+3. CREATE UNIQUE LINK:
+   Example:
+   https://yourdomain.com/feedback?token=abc123
+
+4. GENERATE QR CODE:
+   - Encode above link into QR
+
+5. STORE IN DATABASE:
+   - token
+   - qr_code_url (optional image or link)
+
+6. SEND RESPONSE TO FRONTEND:
+   - QR Code (image/base64 or URL)
+
+7. FRONTEND:
+   - Display QR Code to user
+
+----------------------------------------
+
+5. QR SCAN FLOW
+
+1. User scans QR code
+2. Opens:
+   https://yourdomain.com/feedback?token=abc123
+
+3. Backend validates token:
+   IF valid AND not submitted:
+       → Redirect to Google Form
+   ELSE:
+       → Show "You have already responded"
+
+----------------------------------------
+
+6. GOOGLE FORM INTEGRATION
+
+- QR redirects user to Google Form
+- Optional:
+  - Pre-fill email using query params (if needed)
+
+----------------------------------------
+
+7. ADMIN PANEL STACK
+
+FRONTEND:
+- React.js  
+
+FEATURES:
+- User list  
+- Clickable username  
+- Detailed view  
+
+LIBRARIES:
+- React Table / Material UI  
+
+----------------------------------------
+
+8. API DESIGN (UPDATED)
+
+POST /api/check-user  
+POST /api/save-user  
+POST /api/generate-qr   ← NEW  
+POST /api/submit-feedback  
+
+ADMIN:
+GET /api/admin/users  
+GET /api/admin/users/:id  
+
+----------------------------------------
+
+9. NEW DATA FLOW (WITH QR)
+
+User → Enter Details  
+→ Backend validates  
+→ Generate Token + QR  
+→ Store in DB  
+→ Send QR to frontend  
+→ User scans QR  
+→ Opens feedback link  
+→ Submit feedback  
+→ Backend updates has_submitted  
+
+----------------------------------------
+
+10. SECURITY
+
+- Token-based validation (UUID)
+- One-time usage QR
+- Expiry (optional)
+- Prevent reuse after submission
+
+----------------------------------------
+
+11. LIBRARIES SUMMARY
+
+FRONTEND:
+- react  
+- axios  
+- react-router-dom  
+- react-hook-form  
+- yup  
+- qrcode.react  
+
+BACKEND:
+- express  
+- mongoose  
+- jsonwebtoken  
+- bcrypt  
+- dotenv  
+- uuid  
+- qrcode  
+
+----------------------------------------
+
+12. FUTURE IMPROVEMENTS
+
+- QR expiry timer  
+- Download QR option  
+- Email QR to user  
+- Replace Google Form with custom form  
+
+----------------------------------------

@@ -1,0 +1,172 @@
+PROJECT REQUIREMENT DOCUMENT (FULL VERSION WITH QR FEATURE)
+
+----------------------------------------
+
+1. PROJECT OVERVIEW
+
+This project is a web-based Feedback Management System where users are required to first submit their personal details. After submission, they receive a unique QR code which redirects them to a feedback form. The system ensures that each user can submit feedback only once using email and token-based validation. An admin panel is provided to monitor and manage all user responses.
+
+----------------------------------------
+
+2. OBJECTIVES
+
+- Collect user details before feedback submission  
+- Generate a unique QR code for each user  
+- Restrict multiple feedback submissions  
+- Integrate Google Form for feedback collection  
+- Provide admin panel for monitoring and management  
+
+----------------------------------------
+
+3. USER FLOW
+
+STEP 1: HOME PAGE  
+- User visits website  
+- Only one button visible: "Submit Your Feedback"  
+
+STEP 2: USER DETAILS PAGE  
+- User enters:
+  - Username (required)  
+  - Email (required, unique)  
+  - Phone Number (required)  
+
+VALIDATION:
+- All fields must be filled  
+- Email must be valid format  
+- Phone must be numeric (10 digits recommended)  
+
+LOGIC:
+- System checks database:
+  IF email exists:
+      → Show message: "You have already responded"  
+  ELSE:
+      → Store user details  
+      → Generate unique token  
+      → Generate QR code  
+      → Redirect to QR Page  
+
+STEP 3: QR CODE PAGE  
+- Display QR Code  
+- Show instruction:
+  "Scan this QR code to submit your feedback"  
+
+STEP 4: QR SCAN FLOW  
+- User scans QR  
+- Opens URL:
+  /feedback?token=unique_token  
+
+STEP 5: TOKEN VALIDATION  
+- Backend checks:
+  IF token invalid:
+      → Show error page  
+  IF token already used:
+      → Show "You have already responded"  
+  ELSE:
+      → Redirect to Google Form  
+
+STEP 6: FEEDBACK SUBMISSION  
+- User fills Google Form  
+- After submission:
+  - Backend marks user as submitted  
+
+----------------------------------------
+
+4. DUPLICATE PREVENTION
+
+- Email must be unique  
+- Token must be unique  
+- One-time QR usage  
+- Once submitted:
+  - User cannot re-access form  
+
+----------------------------------------
+
+5. ADMIN PANEL REQUIREMENTS
+
+ADMIN LOGIN:
+- Secure authentication (username/password)
+
+DASHBOARD FEATURES:
+
+A. USER LIST  
+- Display:
+  - Username (clickable)  
+  - Email  
+  - Submission Status  
+
+B. USER DETAILS VIEW  
+- On clicking username:
+  - Username  
+  - Email  
+  - Phone Number  
+  - Feedback (if available)  
+  - Token  
+
+C. SEARCH & FILTER  
+- Search by username/email  
+
+D. DATA MANAGEMENT  
+- Delete user  
+- Export data (CSV)  
+
+----------------------------------------
+
+6. DATABASE REQUIREMENTS
+
+TABLE/COLLECTION: users
+
+FIELDS:
+- id (Primary Key)  
+- username (String)  
+- email (String, Unique)  
+- phone (String)  
+- token (String, Unique)  
+- qr_code_url (String)  
+- has_submitted (Boolean)  
+- feedback (Optional)  
+- created_at (Timestamp)  
+
+----------------------------------------
+
+7. FUNCTIONAL REQUIREMENTS
+
+- Button-based entry system  
+- Multi-step form navigation  
+- QR code generation per user  
+- Token-based validation  
+- Google Form integration  
+- Admin panel with full access  
+- Data storage in database  
+
+----------------------------------------
+
+8. NON-FUNCTIONAL REQUIREMENTS
+
+- Responsive design  
+- Fast loading  
+- Secure authentication  
+- Reliable database operations  
+- Scalability for large users  
+
+----------------------------------------
+
+9. EDGE CASES
+
+- Duplicate email entry  
+- Invalid QR scan  
+- Expired/used token  
+- Network/API failure  
+- Incomplete submission  
+
+----------------------------------------
+
+10. FUTURE ENHANCEMENTS
+
+- Replace Google Form with custom form  
+- OTP verification  
+- Email QR to users  
+- Analytics dashboard  
+- QR expiry timer  
+
+----------------------------------------
+
